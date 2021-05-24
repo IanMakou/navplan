@@ -11,35 +11,31 @@ var TMP_DIR = 'tmp/';
 
 //region LOGGING / ERROR HANDLING
 
-function logError(message)
-{
+function logError(message) {
     console.error(message);
 }
 
 
-function logResponseError(message, response)
-{
+function logResponseError(message, response) {
     console.error(message);
     console.error(response);
 }
 
 
-function writeServerErrLog(errLog)
-{
-	$.post("php/errorlog.php", obj2json(errLog));
+function writeServerErrLog(errLog) {
+    $.post("php/errorlog.php", obj2json(errLog));
 }
 
 
-function displayGenericError()
-{
-	var msg = '<div class="container messages"><div class="alert alert-danger">';
-	msg += "Sorry, something went wrong! :( Try to: <br>\n";
-	msg += "- reload the page (CTRL+F5)<br>\n";
-	msg += "- clear the browser cache<br>\n";
-	msg += "- use a different browser (e.g Chrome 24+, Safari 6.2+, Firefox 23+, IE 10+)\n";
-	msg += '</div></div>';
+function displayGenericError() {
+    var msg = '<div class="container messages"><div class="alert alert-danger">';
+    msg += "Sorry, something went wrong! :( Try to: <br>\n";
+    msg += "- reload the page (CTRL+F5)<br>\n";
+    msg += "- clear the browser cache<br>\n";
+    msg += "- use a different browser (e.g Chrome 24+, Safari 6.2+, Firefox 23+, IE 10+)\n";
+    msg += '</div></div>';
 
-	document.body.innerHTML += msg;
+    document.body.innerHTML += msg;
 }
 
 //endregion
@@ -47,26 +43,21 @@ function displayGenericError()
 
 //region COOKIES
 
-function setCookie(cname, cvalue, exdays)
-{
-	if (exdays > 0)
-	{
-		var d = new Date();
-		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-		var expires = "expires=" + d.toUTCString();
-		document.cookie = cname + "=" + cvalue + "; " + expires;
-	}
-	else
-		document.cookie = cname + "=" + cvalue;
+function setCookie(cname, cvalue, exdays) {
+    if (exdays > 0) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    } else
+        document.cookie = cname + "=" + cvalue;
 }
 
 
-function getCookie(cname)
-{
+function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++)
-	{
+    for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') c = c.substring(1);
         if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
@@ -75,9 +66,8 @@ function getCookie(cname)
 }
 
 
-function deleteCookie(cname)
-{
-	document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+function deleteCookie(cname) {
+    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
 }
 
 //endregion
@@ -85,8 +75,7 @@ function deleteCookie(cname)
 
 //region DOWNLOAD
 
-function createTempFile($http, url, mimeType, userFileName, data, successCallback)
-{
+function createTempFile($http, url, mimeType, userFileName, data, successCallback) {
     var postData = {
         userFileName: userFileName,
         mimeType: mimeType,
@@ -94,23 +83,21 @@ function createTempFile($http, url, mimeType, userFileName, data, successCallbac
     };
 
     $http.post(url, obj2json(postData))
-    .then(
-        function (response) // success
-        {
-            if (response && response.data && response.data.tmpFile)
+        .then(
+            function(response) // success
             {
-                if (successCallback)
-                    successCallback(TMP_DIR + response.data.tmpFile, mimeType, userFileName);
-                //startDownload(TMP_DIR + response.data.tmpFile, userFileName, mimeType);
-            }
-            else
+                if (response && response.data && response.data.tmpFile) {
+                    if (successCallback)
+                        successCallback(TMP_DIR + response.data.tmpFile, mimeType, userFileName);
+                    //startDownload(TMP_DIR + response.data.tmpFile, userFileName, mimeType);
+                } else
+                    logResponseError("ERROR writing temp file", response);
+            },
+            function(response) // error
+            {
                 logResponseError("ERROR writing temp file", response);
-        },
-        function (response) // error
-        {
-            logResponseError("ERROR writing temp file", response);
-        }
-    );
+            }
+        );
 }
 
 //endregion
@@ -118,24 +105,21 @@ function createTempFile($http, url, mimeType, userFileName, data, successCallbac
 
 //region JSON
 
-function undef2null(key, val)
-{
-	if (val === undefined)
-		return null;
-	else
-		return val;
+function undef2null(key, val) {
+    if (val === undefined)
+        return null;
+    else
+        return val;
 }
 
 
-function obj2json(obj)
-{
-	 return JSON.stringify(obj, undef2null);
+function obj2json(obj) {
+    return JSON.stringify(obj, undef2null);
 }
 
 
-function json2obj(json)
-{
-	 return JSON.parse(json);
+function json2obj(json) {
+    return JSON.parse(json);
 }
 
 //endregion
@@ -143,35 +127,30 @@ function json2obj(json)
 
 //region ARRAYS
 
-function pushUnique(itemList, item)
-{
-	if (itemList.indexOf(item) == - 1)
-		itemList.push(item);
+function pushUnique(itemList, item) {
+    if (itemList.indexOf(item) == -1)
+        itemList.push(item);
 }
 
 
-function removeFromArray(array, value)
-{
-	var idx = array.indexOf(value);
+function removeFromArray(array, value) {
+    var idx = array.indexOf(value);
 
-	if (idx !== -1)
-		array.splice(idx, 1);
+    if (idx !== -1)
+        array.splice(idx, 1);
 
-	return array;
+    return array;
 }
 
 
-function chunkUpList(itemList, chunkSize)
-{
+function chunkUpList(itemList, chunkSize) {
     var chunkList = [];
     var currentChunk = [];
 
-    for (var i = 0; i < itemList.length; i++)
-    {
+    for (var i = 0; i < itemList.length; i++) {
         currentChunk.push(itemList[i]);
 
-        if (currentChunk.length >= chunkSize)
-        {
+        if (currentChunk.length >= chunkSize) {
             chunkList.push(currentChunk);
             currentChunk = [];
         }
@@ -189,32 +168,27 @@ function chunkUpList(itemList, chunkSize)
 
 //region TIME / COORDINATES
 
-function getMinSecString(timeMs)
-{
-	return zeroPad(Math.floor(timeMs / 60000)) + ":" + zeroPad(Math.floor(timeMs / 1000) % 60);
+function getMinSecString(timeMs) {
+    return zeroPad(Math.floor(timeMs / 60000)) + ":" + zeroPad(Math.floor(timeMs / 1000) % 60);
 }
 
 
-function getHourMinSecString(date)
-{
-	return zeroPad(date.getHours()) + ":" + zeroPad(date.getMinutes()) + ":" + zeroPad(date.getSeconds());
+function getHourMinSecString(date) {
+    return zeroPad(date.getHours()) + ":" + zeroPad(date.getMinutes()) + ":" + zeroPad(date.getSeconds());
 }
 
 
-function getHourMinString(date)
-{
-	return zeroPad(date.getHours()) + ":" + zeroPad(date.getMinutes());
+function getHourMinString(date) {
+    return zeroPad(date.getHours()) + ":" + zeroPad(date.getMinutes());
 }
 
 
-function getYearMonthDayString(date)
-{
-	return date.getFullYear() + "-" + zeroPad(date.getMonth() + 1) + "-" + zeroPad(date.getDate());
+function getYearMonthDayString(date) {
+    return date.getFullYear() + "-" + zeroPad(date.getMonth() + 1) + "-" + zeroPad(date.getDate());
 }
 
 
-function getHourMinAgeString(timeMs)
-{
+function getHourMinAgeString(timeMs) {
     var ms = Date.now() - timeMs;
     var h = Math.floor(ms / 1000 / 3600);
     var m = Math.floor(ms / 1000 / 60 - h * 60);
@@ -226,15 +200,13 @@ function getHourMinAgeString(timeMs)
 }
 
 
-function getIsoTimeString(timeMs)
-{
+function getIsoTimeString(timeMs) {
     var date = new Date(timeMs);
     return date.toISOString();
 }
 
 
-function getDecimalYear()
-{
+function getDecimalYear() {
     var d1 = new Date();
     var d2 = new Date(d1.getFullYear(), 0, 0, 0, 0, 0, 0);
     var d3 = new Date(d1.getFullYear() + 1, 0, 0, 0, 0, 0, 0);
@@ -244,38 +216,35 @@ function getDecimalYear()
 }
 
 
-function getDmsString(latitude, longitude)
-{
-	var latString = getCoordString(latitude);
-	if (latitude >= 0)
-		latString += " N";
-	else
-		latString += " S";
+function getDmsString(latitude, longitude) {
+    var latString = getCoordString(latitude);
+    if (latitude >= 0)
+        latString += " N";
+    else
+        latString += " S";
 
-	var lonString = getCoordString(longitude);
-	if (longitude >= 0)
-		lonString += " E";
-	else
-		lonString += " W";
+    var lonString = getCoordString(longitude);
+    if (longitude >= 0)
+        lonString += " E";
+    else
+        lonString += " W";
 
-	return latString + " / " + lonString;
+    return latString + " / " + lonString;
 
-	function getCoordString(coord)
-	{
-	    if (coord < 0)
-	        coord = -coord;
+    function getCoordString(coord) {
+        if (coord < 0)
+            coord = -coord;
 
-		var d = Math.floor(coord);
-		var m = Math.floor((coord - d) * 60);
-		var s = Math.floor((coord - d - m/60) * 3600);
+        var d = Math.floor(coord);
+        var m = Math.floor((coord - d) * 60);
+        var s = Math.floor((coord - d - m / 60) * 3600);
 
-		return d + "° " + zeroPad(m) + "' " + zeroPad(s) + '"';
-	}
+        return d + "° " + zeroPad(m) + "' " + zeroPad(s) + '"';
+    }
 }
 
 
-function getLonLatFromGradMinSec(latGrad, latMin, latSec, latDir, lonGrad, lonMin, lonSec, lonDir)
-{
+function getLonLatFromGradMinSec(latGrad, latMin, latSec, latDir, lonGrad, lonMin, lonSec, lonDir) {
     var latG = parseInt(latGrad);
     var latM = parseInt(latMin);
     var latS = parseFloat(latSec);
@@ -290,44 +259,41 @@ function getLonLatFromGradMinSec(latGrad, latMin, latSec, latDir, lonGrad, lonMi
     if (lonDir.toUpperCase().indexOf("W") >= 0)
         lon = -lon;
 
-    return [ lon, lat ];
+    return [lon, lat];
 }
 
 
-function shrinkPositions(positions)
-{
-	var shrinkedpos = [];
+function shrinkPositions(positions) {
+    var shrinkedpos = [];
 
-	for (var i = 0; i < positions.length; i++)
-		shrinkedpos.push([
-			roundToDigits(positions[i].latitude, 7),
-			roundToDigits(positions[i].longitude, 7),
-			positions[i].altitude ? roundToDigits(positions[i].altitude, 1) : null,
-			positions[i].timestamp
-		]);
+    for (var i = 0; i < positions.length; i++)
+        shrinkedpos.push([
+            roundToDigits(positions[i].latitude, 7),
+            roundToDigits(positions[i].longitude, 7),
+            positions[i].altitude ? roundToDigits(positions[i].altitude, 1) : null,
+            positions[i].timestamp
+        ]);
 
-	return shrinkedpos;
+    return shrinkedpos;
 }
 
 
-function unshrinkPositions(positions)
-{
-	var unshrinkedpos = [];
+function unshrinkPositions(positions) {
+    var unshrinkedpos = [];
 
-	for (var i = 0; i < positions.length; i++)
-		unshrinkedpos.push({
-			latitude: positions[i][0],
-			longitude: positions[i][1],
-			altitude: positions[i][2],
-			timestamp: positions[i][3]
-		});
+    for (var i = 0; i < positions.length; i++)
+        unshrinkedpos.push({
+            latitude: positions[i][0],
+            longitude: positions[i][1],
+            altitude: positions[i][2],
+            timestamp: positions[i][3]
+        });
 
-	return unshrinkedpos;
+    return unshrinkedpos;
 }
 
 
-function zeroPad(number, digits)
-{
+function zeroPad(number, digits) {
     if (!digits)
         digits = 2;
 
@@ -340,9 +306,8 @@ function zeroPad(number, digits)
 }
 
 
-function roundToDigits(num, digits)
-{
-	return Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
+function roundToDigits(num, digits) {
+    return Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 }
 
 //endregion
@@ -350,8 +315,7 @@ function roundToDigits(num, digits)
 
 //region EXTENTS
 
-function containsExtent(outerExtent, innerExtent)
-{
+function containsExtent(outerExtent, innerExtent) {
     if (!outerExtent || !innerExtent)
         return false;
 
@@ -359,8 +323,7 @@ function containsExtent(outerExtent, innerExtent)
 }
 
 
-function calcOversizeExtent(extent, factor)
-{
+function calcOversizeExtent(extent, factor) {
     var minHalfDiffDeg = 0.1;
     var maxDigits = 7;
 
@@ -379,7 +342,8 @@ function calcOversizeExtent(extent, factor)
     return [roundPrecision(centerLon - halfDiffLon * factor, maxDigits),
         roundPrecision(centerLat - halfDiffLat * factor, maxDigits),
         roundPrecision(centerLon + halfDiffLon * factor, maxDigits),
-        roundPrecision(centerLat + halfDiffLat * factor, maxDigits)];
+        roundPrecision(centerLat + halfDiffLat * factor, maxDigits)
+    ];
 }
 
 //endregion
@@ -387,44 +351,37 @@ function calcOversizeExtent(extent, factor)
 
 //region UNIT CONVERSION
 
-function m2ft(height_m)
-{
-	return height_m * 3.2808;
+function m2ft(height_m) {
+    return height_m * 3.2808;
 }
 
 
-function ft2m(height_ft)
-{
-	return height_ft / 3.2808;
+function ft2m(height_ft) {
+    return height_ft / 3.2808;
 }
 
 
-function nautmile2m(distance_nm)
-{
+function nautmile2m(distance_nm) {
     return distance_nm * 1852;
 }
 
 
-function kmh2kt(speed_kmh)
-{
+function kmh2kt(speed_kmh) {
     return speed_kmh / 1.852;
 }
 
 
-function deg2rad(deg)
-{
-	return deg / 360 * 2 * Math.PI;
+function deg2rad(deg) {
+    return deg / 360 * 2 * Math.PI;
 }
 
 
-function rad2deg(rad)
-{
-	return rad / (2 * Math.PI) * 360;
+function rad2deg(rad) {
+    return rad / (2 * Math.PI) * 360;
 }
 
 
-function roundPrecision(value, decimals)
-{
+function roundPrecision(value, decimals) {
     value = value * Math.pow(10, decimals);
     value = Math.round(value);
     value = value / Math.pow(10, decimals);
@@ -493,8 +450,7 @@ function roundPrecision(value, decimals)
 //region HTML CANVAS
 
 
-function createCanvas(widthPx, heightPx)
-{
+function createCanvas(widthPx, heightPx) {
     var canvas = document.createElement('canvas');
     canvas.width = widthPx;
     canvas.height = heightPx;
@@ -512,8 +468,7 @@ function createCanvas(widthPx, heightPx)
         ctx.backingStorePixelRatio || 1;
 
     // upscale the canvas if the two ratios don't match
-    if (devicePixelRatio !== backingStoreRatio)
-    {
+    if (devicePixelRatio !== backingStoreRatio) {
         var ratio = devicePixelRatio / backingStoreRatio;
 
         canvas.width = widthPx * ratio;
@@ -530,16 +485,13 @@ function createCanvas(widthPx, heightPx)
 }
 
 
-function getCanvasContext(canvas)
-{
+function getCanvasContext(canvas) {
     return canvas.getContext("2d");
 }
 
 
-function drawText(canvasContext, x, y, text, fillColor, borderColor, borderWidth)
-{
-    if (borderColor && borderWidth && borderWidth > 0)
-    {
+function drawText(canvasContext, x, y, text, fillColor, borderColor, borderWidth) {
+    if (borderColor && borderWidth && borderWidth > 0) {
         canvasContext.strokeStyle = borderColor;
         canvasContext.lineWidth = borderWidth;
         canvasContext.strokeText(text, x, y);
@@ -550,13 +502,11 @@ function drawText(canvasContext, x, y, text, fillColor, borderColor, borderWidth
 }
 
 
-function drawRectangle(canvasContext, x, y, widthPx, heightPx, fillColor, borderColor, borderWidth)
-{
+function drawRectangle(canvasContext, x, y, widthPx, heightPx, fillColor, borderColor, borderWidth) {
     canvasContext.fillStyle = fillColor;
     canvasContext.fillRect(x, y, widthPx, heightPx);
 
-    if (borderColor && borderWidth && borderWidth > 0)
-    {
+    if (borderColor && borderWidth && borderWidth > 0) {
         canvasContext.strokeStyle = borderColor;
         canvasContext.lineWidth = borderWidth;
         canvasContext.strokeRect(x, y, widthPx, heightPx);
@@ -564,8 +514,7 @@ function drawRectangle(canvasContext, x, y, widthPx, heightPx, fillColor, border
 }
 
 
-function drawFillBox(canvasContext, x, y, width, height, borderWidth, color, levelFactor)
-{
+function drawFillBox(canvasContext, x, y, width, height, borderWidth, color, levelFactor) {
     canvasContext.lineWidth = borderWidth;
     canvasContext.strokeStyle = color;
     canvasContext.fillStyle = color;
@@ -579,8 +528,7 @@ function drawFillBox(canvasContext, x, y, width, height, borderWidth, color, lev
 
 //region HTML FULL SCREEN
 
-function startFullScreenMode(element)
-{
+function startFullScreenMode(element) {
     if (element.requestFullScreen)
         element.requestFullScreen();
     else if (element.mozRequestFullScreen)
@@ -592,8 +540,7 @@ function startFullScreenMode(element)
 }
 
 
-function stopFullScreenMode()
-{
+function stopFullScreenMode() {
     if (document.cancelFullScreen)
         document.cancelFullScreen();
     else if (document.mozCancelFullScreen)
@@ -605,14 +552,12 @@ function stopFullScreenMode()
 }
 
 
-function isInFullScreenMode()
-{
+function isInFullScreenMode() {
     return document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
 }
 
 
-function isFullScreenEnabled2()
-{
+function isFullScreenEnabled2() {
     return document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled;
 }
 
@@ -622,29 +567,59 @@ function isFullScreenEnabled2()
 //region MISC
 
 
-function isBranch2()
-{
+function isBranch2() {
     return (location.href.indexOf("branch") >= 0);
 }
 
 
-function isSelf2(email)
-{
+function isSelf2(email) {
     return (email == "armand@tschanz.com");
 }
 
 
-function getMorseString(text)
-{
+function getMorseString(text) {
     var morse = {
-        "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", "G": "--.", "H": "....", "I": "..", "J": ".---", "K": "-.-", "L": ".-..", "M": "--",
-        "N": "-.", "O": "---", "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-", "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--", "Z": "--..",
-        "1": ".----", "2": "..---", "3": "...--", "4": "....-", "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.", "0": "-----" };
+        "A": ".-",
+        "B": "-...",
+        "C": "-.-.",
+        "D": "-..",
+        "E": ".",
+        "F": "..-.",
+        "G": "--.",
+        "H": "....",
+        "I": "..",
+        "J": ".---",
+        "K": "-.-",
+        "L": ".-..",
+        "M": "--",
+        "N": "-.",
+        "O": "---",
+        "P": ".--.",
+        "Q": "--.-",
+        "R": ".-.",
+        "S": "...",
+        "T": "-",
+        "U": "..-",
+        "V": "...-",
+        "W": ".--",
+        "X": "-..-",
+        "Y": "-.--",
+        "Z": "--..",
+        "1": ".----",
+        "2": "..---",
+        "3": "...--",
+        "4": "....-",
+        "5": ".....",
+        "6": "-....",
+        "7": "--...",
+        "8": "---..",
+        "9": "----.",
+        "0": "-----"
+    };
 
     var out = "";
 
-    for (var i = 0; i < text.length; i++)
-    {
+    for (var i = 0; i < text.length; i++) {
         if (i > 0)
             out += " ";
 
@@ -658,29 +633,24 @@ function getMorseString(text)
 }
 
 
-function airspaceListToggle()
-{
+function airspaceListToggle() {
     var asContainerFull = document.getElementById("airspace-popup");
     var asContainerSimple = document.getElementById("airspace-popup-simplified");
 
     if (!asContainerFull || !asContainerSimple)
         return;
 
-    if (asContainerFull.style.display == 'block')
-    {
+    if (asContainerFull.style.display == 'block') {
         asContainerFull.style.display = 'none';
         asContainerSimple.style.display = 'block';
-    }
-    else
-    {
+    } else {
         asContainerFull.style.display = 'block';
         asContainerSimple.style.display = 'none';
     }
 }
 
 
-function regexMatchAll(regex, text)
-{
+function regexMatchAll(regex, text) {
     if (regex.constructor !== RegExp)
         throw new Error('not RegExp');
 
@@ -691,8 +661,7 @@ function regexMatchAll(regex, text)
         while (match = regex.exec(text)) {
             res.push(match);
         }
-    }
-    else {
+    } else {
         if (match = regex.exec(text)) {
             res.push(match);
         }

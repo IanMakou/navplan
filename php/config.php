@@ -1,7 +1,7 @@
 <?php
 	// db parameters
-	$db_host = "TODO";
-	$db_name = "TODO";
-	$db_user = "TODO";
-	$db_pw = "TODO";
+	$db_host = "localhost";
+	$db_name = "map";
+	$db_user = "root";
+	$db_pw = "";
 ?>

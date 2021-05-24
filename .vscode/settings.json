@@ -1,0 +1,5 @@
+{
+    "html.format.wrapLineLength": 0,
+    "html.validate.scripts": false,
+    "totvsLanguageServer.welcomePage": false
+}

@@ -1,10 +1,8 @@
 <?php
 	include "version.php";
 
-	$host = "www.navplan.ch";
-
-    echo 'Hello world';
-
+	// $host = "www.navplan.ch";
+  
     // $host = 
 
     // if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off" || $_SERVER['HTTP_HOST'] != $host)
@@ -20,7 +18,7 @@
 ?><!DOCTYPE HTML>
 <html lang="de" data-ng-app="navplanApp" data-ng-controller="navplanCtrl">
 <head>
-	<title>navplan.ch</title>
+	<title>ChApp's map</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
     <meta name="description" content="VFR flight planning online. Open-source, non-commercial hobbyist project with a main focus on Switzerland." />
@@ -92,7 +90,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#/">NAVPLAN.CH</a>
+				<a class="navbar-brand" href="#/">ChApp's map</a>
 			</div>
 			<div id="navbarcontent" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
