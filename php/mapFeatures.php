@@ -35,7 +35,7 @@ $return_object = json_encode(
     array(
         "navaids" => $navaids,
         "airports" => $airports,
-        // "airspaces" => $airspaces,
+        "airspaces" => $airspaces,
         // "reportingPoints" => $reportingPoints,
         // "userPoints" => $userPoints,
         // "webcams" => $webcams

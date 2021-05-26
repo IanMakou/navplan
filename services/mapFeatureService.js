@@ -66,7 +66,7 @@ function mapFeatureService($http) {
                 function(response) // success
                 {
                     // if (response && response.data && response.data.airports && response.data.navaids && response.data.reportingPoints && response.data.userPoints && response.data.airspaces && response.data.webcams)
-                    debugger;
+
                     if (response && response.data && response.data.airports && response.data.navaids && response.data.airspaces) {
                         cacheFeatures(extent, response.data);
 
