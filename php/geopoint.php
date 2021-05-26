@@ -21,8 +21,8 @@ switch($_GET["action"])
             checkNumeric($_GET["rad"]),
             checkNumeric($_GET["minnotamtime"]),
             checkNumeric($_GET["maxnotamtime"]),
-            $_COOKIE["email"] ? checkEscapeEmail($conn, $_COOKIE["email"]) : NULL,
-            $_COOKIE["token"] ? checkEscapeToken($conn, $_COOKIE["token"]) : NULL
+            // $_COOKIE["email"] ? checkEscapeEmail($conn, $_COOKIE["email"]) : NULL,
+            // $_COOKIE["token"] ? checkEscapeToken($conn, $_COOKIE["token"]) : NULL
         );
         break;
     default:
@@ -175,9 +175,11 @@ function searchByName($search, $email, $token)
 }
 
 
-function searchByPosition($lat, $lon, $rad, $minNotamTime, $maxNotamTime, $email, $token)
+function searchByPosition($lat, $lon, $rad, $minNotamTime, $maxNotamTime, $email = null, $token= null)
 {
     global $conn;
+    $email = false; 
+    $token = false; 
 
 
     // cols: sortorder, type, id, name, frequency, callsign, latitude, longitude, elevation
