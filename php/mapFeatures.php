@@ -12,17 +12,20 @@ $minLat = checkNumeric($_GET["minlat"]);
 $maxLat = checkNumeric($_GET["maxlat"]);
 $minLon = checkNumeric($_GET["minlon"]);
 $maxLon = checkNumeric($_GET["maxlon"]);
-$email = $_COOKIE["email"] ? checkEscapeEmail($conn, $_COOKIE["email"]) : NULL;
-$token = $_COOKIE["token"] ? checkEscapeToken($conn, $_COOKIE["token"]) : NULL;
+// $email = $_COOKIE["email"] ? checkEscapeEmail($conn, $_COOKIE["email"]) : NULL;
+// $token = $_COOKIE["token"] ? checkEscapeToken($conn, $_COOKIE["token"]) : NULL;
+
+$email = false; 
+$token = false;
 
 // load data
 $extent = "GeomFromText('POLYGON((" . $minLon . " " . $minLat . "," . $maxLon . " " . $minLat . "," . $maxLon . " " . $maxLat . "," . $minLon . " " . $maxLat . "," . $minLon . " " . $minLat . "))')";
 $navaids = getNavaids($extent);
 $airports = getAirports($extent, $email);
-$airspaces = getAirspaces($extent);
-$webcams = getWebcams($minLon, $minLat, $maxLon, $maxLat);
-$reportingPoints = getReportingPoints($extent);
-$userPoints = getUserPoints($email, $token, $minLon, $minLat, $maxLon, $maxLat);
+// $airspaces = getAirspaces($extent);
+// $webcams = getWebcams($minLon, $minLat, $maxLon, $maxLat);
+// $reportingPoints = getReportingPoints($extent);
+// $userPoints = getUserPoints($email, $token, $minLon, $minLat, $maxLon, $maxLat);
 
 // close db
 $conn->close();
@@ -32,10 +35,10 @@ $return_object = json_encode(
     array(
         "navaids" => $navaids,
         "airports" => $airports,
-        "airspaces" => $airspaces,
-        "reportingPoints" => $reportingPoints,
-        "userPoints" => $userPoints,
-        "webcams" => $webcams
+        // "airspaces" => $airspaces,
+        // "reportingPoints" => $reportingPoints,
+        // "userPoints" => $userPoints,
+        // "webcams" => $webcams
     )
 );
 

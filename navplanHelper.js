@@ -19,6 +19,7 @@ function logError(message) {
 function logResponseError(message, response) {
     console.error(message);
     console.error(response);
+    console.log(response);
 }
 
 

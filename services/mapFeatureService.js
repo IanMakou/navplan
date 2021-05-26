@@ -3,7 +3,7 @@
  */
 
 navplanApp
-    .factory('mapFeatureService', mapFeatureService );
+    .factory('mapFeatureService', mapFeatureService);
 
 mapFeatureService.$inject = ['$http'];
 
@@ -28,15 +28,13 @@ function mapFeatureService($http) {
 
     // region CLASSES
 
-    function FeatureCache(extent, features)
-    {
+    function FeatureCache(extent, features) {
         this.extent = extent;
         this.features = features;
     }
 
 
-    function AirportCache()
-    {
+    function AirportCache() {
         this.apByIcao = {};
     }
 
@@ -50,11 +48,9 @@ function mapFeatureService($http) {
             loadMapFeatures(calcOversizeExtent(extent, OVERSIZE_FACTOR), successCallback, tryLoadAppCachedFeatures); // load from server
 
 
-        function tryLoadAppCachedFeatures()
-        {
+        function tryLoadAppCachedFeatures() {
             var mfCookie = getCookie("mapfeaturesextent");
-            if (mfCookie)
-            {
+            if (mfCookie) {
                 var extent = json2obj(mfCookie);
                 loadMapFeatures(extent, successCallback, errorCallback); // try to load from app cache
             }
@@ -67,29 +63,28 @@ function mapFeatureService($http) {
 
         $http.get(url)
             .then(
-                function (response) // success
+                function(response) // success
                 {
-                    if (response && response.data && response.data.airports && response.data.navaids && response.data.reportingPoints && response.data.userPoints && response.data.airspaces && response.data.webcams)
-                    {
+                    // if (response && response.data && response.data.airports && response.data.navaids && response.data.reportingPoints && response.data.userPoints && response.data.airspaces && response.data.webcams)
+                    debugger;
+                    if (response && response.data && response.data.airports && response.data.navaids) {
                         cacheFeatures(extent, response.data);
 
                         if (successCallback)
                             successCallback(response.data);
-                    }
-                    else {
+                    } else {
                         logResponseError("ERROR reading map features", response);
 
                         if (errorCallback)
                             errorCallback();
                     }
                 },
-                function (response) // error
+                function(response) // error
                 {
                     // try loading from app cache
                     var mapFeatureList = window.sessionStorage.getItem("mapFeatureCache");
 
-                    if (mapFeatureList && successCallback)
-                    {
+                    if (mapFeatureList && successCallback) {
                         successCallback(json2obj(mapFeatureList));
                         return;
                     }
@@ -103,18 +98,17 @@ function mapFeatureService($http) {
     }
 
 
-    function loadAllUserPoints(successCallback)
-    {
+    function loadAllUserPoints(successCallback) {
         $http.get(userWpBaseUrl)
             .then(
-                function (response) // success
+                function(response) // success
                 {
                     if (response && response.data && response.data.userWaypoints)
                         successCallback(response.data.userWaypoints);
                     else
                         logResponseError("ERROR reading user waypoints", response);
                 },
-                function (response) // error
+                function(response) // error
                 {
                     logResponseError("ERROR reading user waypoints", response);
                 }
@@ -122,16 +116,14 @@ function mapFeatureService($http) {
     }
 
 
-    function cacheFeatures(extent, featureList)
-    {
+    function cacheFeatures(extent, featureList) {
         if (!featureList || !extent)
             return;
 
         featureCache = new FeatureCache(extent, featureList);
         airportCache = new AirportCache();
 
-        for (var i = 0; i < featureList.airports.length; i++)
-        {
+        for (var i = 0; i < featureList.airports.length; i++) {
             var ap = featureList.airports[i];
 
             if (ap.icao)
@@ -140,115 +132,103 @@ function mapFeatureService($http) {
     }
 
 
-    function getAirportByIcao(icao)
-    {
+    function getAirportByIcao(icao) {
         return airportCache.apByIcao[icao];
     }
 
 
-    function getAirportById(id)
-    {
+    function getAirportById(id) {
         if (!featureCache.features || !featureCache.features.airports)
             return;
 
-        for (var i = 0; i < featureCache.features.airports.length; i++)
-        {
+        for (var i = 0; i < featureCache.features.airports.length; i++) {
             if (featureCache.features.airports[i].id == id)
                 return featureCache.features.airports[i];
         }
     }
 
 
-    function getNavaidById(id)
-    {
+    function getNavaidById(id) {
         if (!featureCache.features || !featureCache.features.navaids)
             return;
 
-        for (var i = 0; i < featureCache.features.navaids.length; i++)
-        {
+        for (var i = 0; i < featureCache.features.navaids.length; i++) {
             if (featureCache.features.navaids[i].id == id)
                 return featureCache.features.navaids[i];
         }
     }
 
 
-    function getReportingPointById(id)
-    {
+    function getReportingPointById(id) {
         if (!featureCache.features || !featureCache.features.reportingPoints)
             return;
 
-        for (var i = 0; i < featureCache.features.reportingPoints.length; i++)
-        {
+        for (var i = 0; i < featureCache.features.reportingPoints.length; i++) {
             if (featureCache.features.reportingPoints[i].id == id)
                 return featureCache.features.reportingPoints[i];
         }
     }
 
 
-    function getUserPointById(id)
-    {
+    function getUserPointById(id) {
         if (!featureCache.features || !featureCache.features.userPoints)
             return;
 
-        for (var i = 0; i < featureCache.features.userPoints.length; i++)
-        {
+        for (var i = 0; i < featureCache.features.userPoints.length; i++) {
             if (featureCache.features.userPoints[i].id == id)
                 return featureCache.features.userPoints[i];
         }
     }
 
 
-    function addFeatureByTypeAndId(type, id, parentObject)
-    {
+    function addFeatureByTypeAndId(type, id, parentObject) {
         switch (type) {
             case 'airport':
-            {
-                var ap = getAirportById(id);
-                if (ap)
-                    parentObject.airport = ap;
-                break;
-            }
+                {
+                    var ap = getAirportById(id);
+                    if (ap)
+                        parentObject.airport = ap;
+                    break;
+                }
             case 'navaid':
-            {
-                var nav = getNavaidById(id);
-                if (nav)
-                    parentObject.navaid = nav;
-                break;
-            }
+                {
+                    var nav = getNavaidById(id);
+                    if (nav)
+                        parentObject.navaid = nav;
+                    break;
+                }
             case 'report':
-            {
-                var rp = getReportingPointById(id);
-                if (rp)
-                    parentObject.reportingpoint = rp;
-                break;
-            }
+                {
+                    var rp = getReportingPointById(id);
+                    if (rp)
+                        parentObject.reportingpoint = rp;
+                    break;
+                }
             case 'user':
-            {
-                var uwp = getUserPointById(id);
-                if (uwp)
-                    parentObject.userWaypoint = uwp;
-                break;
-            }
+                {
+                    var uwp = getUserPointById(id);
+                    if (uwp)
+                        parentObject.userWaypoint = uwp;
+                    break;
+                }
         }
     }
 
 
-    function addFeatureByTypeAndPos(type, latitude, longitude, parentObject)
-    {
+    function addFeatureByTypeAndPos(type, latitude, longitude, parentObject) {
         var features = undefined;
 
-        switch (type)
-        {
-            case "airport" :
+        switch (type) {
+            case "airport":
                 features = featureCache.features.airports;
                 break;
-            case "navaid" :
+            case "navaid":
                 features = featureCache.features.navaids;
                 break;
-            case "report" :
+            case "report":
                 features = featureCache.features.reportingPoints;
                 break;
-            case "user" :
+            case "user":
                 features = featureCache.features.userPoints;
                 break;
         }
@@ -256,23 +236,20 @@ function mapFeatureService($http) {
         if (features == undefined)
             return;
 
-        for (var key in features)
-        {
+        for (var key in features) {
             var feature = features[key];
-            if (feature.latitude == latitude && feature.longitude == longitude)
-            {
-                switch (type)
-                {
-                    case "airport" :
+            if (feature.latitude == latitude && feature.longitude == longitude) {
+                switch (type) {
+                    case "airport":
                         parentObject.airport = feature;
                         break;
-                    case "navaid" :
+                    case "navaid":
                         parentObject.navaid = feature;
                         break;
-                    case "report" :
+                    case "report":
                         parentObject.reportingpoint = feature;
                         break;
-                    case "user" :
+                    case "user":
                         parentObject.userWaypoint = feature;
                         break;
                 }
@@ -283,16 +260,14 @@ function mapFeatureService($http) {
     }
 
 
-    function getAirspacesAtLatLon(lonLat)
-    {
+    function getAirspacesAtLatLon(lonLat) {
         if (!lonLat || !featureCache.features)
             return [];
 
         var asList = [];
         var pt = turf.point(lonLat);
 
-        for (var key in featureCache.features.airspaces)
-        {
+        for (var key in featureCache.features.airspaces) {
             var airspace = featureCache.features.airspaces[key];
 
             /*if (lonLat[0] < airspace.lonLatExtent[0][0] || lonLat[0] > airspace.lonLatExtent[0][1] || lonLat[1] < airspace.lonLatExtent[1][0] || lonLat[1] > airspace.lonLatExtent[1][1])
