@@ -5,13 +5,12 @@ require_once "terrainHelper.php";
 
 $conn = openDb();
 
-switch($_GET["action"])
-{
+switch ($_GET["action"]) {
     case "searchByName":
         searchByName(
             checkEscapeString($conn, $_GET["search"], 1, 100),
-            $_COOKIE["email"] ? checkEscapeEmail($conn, $_COOKIE["email"]) : NULL,
-            $_COOKIE["token"] ? checkEscapeToken($conn, $_COOKIE["token"]) : NULL
+            // $_COOKIE["email"] ? checkEscapeEmail($conn, $_COOKIE["email"]) : NULL,
+            // $_COOKIE["token"] ? checkEscapeToken($conn, $_COOKIE["token"]) : NULL
         );
         break;
     case "searchByPosition":
@@ -30,11 +29,12 @@ switch($_GET["action"])
 }
 
 
-function searchByName($search, $email, $token)
+function searchByName($search, $email = null, $token = null)
 {
     global $conn;
 
-
+    $email = false;
+    $token = false;
     // cols: type, id, name, wpname, country, admin1, frequency, callsign, airport_icao, latitude, longitude, elevation
 
     $query = "(SELECT";
@@ -84,80 +84,79 @@ function searchByName($search, $email, $token)
     $query .= " ORDER BY CASE WHEN country = 'CH' THEN 1 ELSE 2 END ASC, kuerzel ASC";
     $query .= " LIMIT 10)";
 
-    $query .= " UNION ";
+    // $query .= " UNION ";
 
-    $query .= "(SELECT";
-    $query .= "   'report' AS type,";
-    $query .= "   id,";
-    $query .= "   CONCAT(name , ' (', airport_icao, ')') AS name,";
-    $query .= "   name AS wpname,";
-    $query .= "   NULL AS country,";
-    $query .= "   NULL AS admin1,";
-    $query .= "   NULL AS admin2,";
-    $query .= "   NULL AS frequency,";
-    $query .= "   NULL AS callsign,";
-    $query .= "   airport_icao,";
-    $query .= "   latitude,";
-    $query .= "   longitude,";
-    $query .= "   NULL AS elevation";
-    $query .= " FROM reporting_points";
-    $query .= " WHERE";
-    $query .= "   airport_icao LIKE '" . $search . "%'";
-    $query .= " ORDER BY airport_icao ASC, name ASC";
-    $query .= " LIMIT 10)";
+    // $query .= "(SELECT";
+    // $query .= "   'report' AS type,";
+    // $query .= "   id,";
+    // $query .= "   CONCAT(name , ' (', airport_icao, ')') AS name,";
+    // $query .= "   name AS wpname,";
+    // $query .= "   NULL AS country,";
+    // $query .= "   NULL AS admin1,";
+    // $query .= "   NULL AS admin2,";
+    // $query .= "   NULL AS frequency,";
+    // $query .= "   NULL AS callsign,";
+    // $query .= "   airport_icao,";
+    // $query .= "   latitude,";
+    // $query .= "   longitude,";
+    // $query .= "   NULL AS elevation";
+    // $query .= " FROM reporting_points";
+    // $query .= " WHERE";
+    // $query .= "   airport_icao LIKE '" . $search . "%'";
+    // $query .= " ORDER BY airport_icao ASC, name ASC";
+    // $query .= " LIMIT 10)";
 
-    if ($email && $token)
-    {
-        $query .= " UNION ";
+    // if ($email && $token) {
+    //     $query .= " UNION ";
 
-        $query .= "(SELECT";
-        $query .= "   'user' AS type,";
-        $query .= "   uwp.id, name,";
-        $query .= "   name AS wpname,";
-        $query .= "   NULL AS country,";
-        $query .= "   NULL AS admin1,";
-        $query .= "   NULL AS admin2,";
-        $query .= "   NULL AS frequency,";
-        $query .= "   NULL AS callsign,";
-        $query .= "   NULL AS airport_icao,";
-        $query .= "   latitude,";
-        $query .= "   longitude,";
-        $query .= "   NULL AS elevation";
-        $query .= " FROM user_waypoints AS uwp";
-        $query .= "   INNER JOIN users AS usr ON uwp.user_id = usr.id";
-        $query .= " WHERE";
-        $query .= "   usr.email = '" . $email . "' AND usr.token = '" . $token . "'";
-        $query .= "   AND name LIKE '" . $search . "%'";
-        $query .= " ORDER BY name ASC";
-        $query .= " LIMIT 10)";
-    }
+    //     $query .= "(SELECT";
+    //     $query .= "   'user' AS type,";
+    //     $query .= "   uwp.id, name,";
+    //     $query .= "   name AS wpname,";
+    //     $query .= "   NULL AS country,";
+    //     $query .= "   NULL AS admin1,";
+    //     $query .= "   NULL AS admin2,";
+    //     $query .= "   NULL AS frequency,";
+    //     $query .= "   NULL AS callsign,";
+    //     $query .= "   NULL AS airport_icao,";
+    //     $query .= "   latitude,";
+    //     $query .= "   longitude,";
+    //     $query .= "   NULL AS elevation";
+    //     $query .= " FROM user_waypoints AS uwp";
+    //     $query .= "   INNER JOIN users AS usr ON uwp.user_id = usr.id";
+    //     $query .= " WHERE";
+    //     $query .= "   usr.email = '" . $email . "' AND usr.token = '" . $token . "'";
+    //     $query .= "   AND name LIKE '" . $search . "%'";
+    //     $query .= " ORDER BY name ASC";
+    //     $query .= " LIMIT 10)";
+    // }
 
-    $query .= " UNION ";
+    // $query .= " UNION ";
 
-    $query .= "(SELECT ";
-    $query .= "  'geoname' AS type,";
-    $query .= "  geo.geonameid AS id,";
-    $query .= "  geo.name AS name,";
-    $query .= "  geo.asciiname AS wpname,";
-    $query .= "  geo.country_code AS country,";
-    $query .= "  cod1.name AS admin1,";
-    $query .= "  cod2.name AS admin2,";
-    $query .= "  NULL AS frequency,";
-    $query .= "  NULL AS callsign,";
-    $query .= "  NULL AS airport_icao,";
-    $query .= "  geo.latitude,";
-    $query .= "  geo.longitude,";
-    $query .= "  geo.elevation";
-    $query .= " FROM geonames AS geo";
-    $query .= "  LEFT JOIN geonames_admin1codes AS cod1";
-    $query .= "    ON cod1.geonames_key = CONCAT(geo.country_code, '.', geo.admin1_code)";
-    $query .= "  LEFT JOIN geonames_admin2codes AS cod2";
-    $query .= "    ON cod2.geonames_key = CONCAT(geo.country_code, '.', geo.admin1_code, '.' , geo.admin2_code)";
-    $query .= " WHERE";
-    $query .= "   MATCH (geo.name, geo.alternatenames) AGAINST ('" . $search . "*' IN BOOLEAN MODE)";
-    $query .= "   AND " . getGeonamesFilterQuery();
-    $query .= " ORDER BY CASE WHEN geo.country_code = 'CH' THEN 1 ELSE 2 END ASC, geo.population DESC";
-    $query .= " LIMIT 10)";
+    // $query .= "(SELECT ";
+    // $query .= "  'geoname' AS type,";
+    // $query .= "  geo.geonameid AS id,";
+    // $query .= "  geo.name AS name,";
+    // $query .= "  geo.asciiname AS wpname,";
+    // $query .= "  geo.country_code AS country,";
+    // $query .= "  cod1.name AS admin1,";
+    // $query .= "  cod2.name AS admin2,";
+    // $query .= "  NULL AS frequency,";
+    // $query .= "  NULL AS callsign,";
+    // $query .= "  NULL AS airport_icao,";
+    // $query .= "  geo.latitude,";
+    // $query .= "  geo.longitude,";
+    // $query .= "  geo.elevation";
+    // $query .= " FROM geonames AS geo";
+    // $query .= "  LEFT JOIN geonames_admin1codes AS cod1";
+    // $query .= "    ON cod1.geonames_key = CONCAT(geo.country_code, '.', geo.admin1_code)";
+    // $query .= "  LEFT JOIN geonames_admin2codes AS cod2";
+    // $query .= "    ON cod2.geonames_key = CONCAT(geo.country_code, '.', geo.admin1_code, '.' , geo.admin2_code)";
+    // $query .= " WHERE";
+    // $query .= "   MATCH (geo.name, geo.alternatenames) AGAINST ('" . $search . "*' IN BOOLEAN MODE)";
+    // $query .= "   AND " . getGeonamesFilterQuery();
+    // $query .= " ORDER BY CASE WHEN geo.country_code = 'CH' THEN 1 ELSE 2 END ASC, geo.population DESC";
+    // $query .= " LIMIT 10)";
 
     // execute query
     $result = $conn->query($query);
@@ -175,11 +174,11 @@ function searchByName($search, $email, $token)
 }
 
 
-function searchByPosition($lat, $lon, $rad, $minNotamTime, $maxNotamTime, $email = null, $token= null)
+function searchByPosition($lat, $lon, $rad, $minNotamTime, $maxNotamTime, $email = null, $token = null)
 {
     global $conn;
-    $email = false; 
-    $token = false; 
+    $email = false;
+    $token = false;
 
 
     // cols: sortorder, type, id, name, frequency, callsign, latitude, longitude, elevation
@@ -220,8 +219,7 @@ function searchByPosition($lat, $lon, $rad, $minNotamTime, $maxNotamTime, $email
     $query .= " AND longitude > " . ($lon - $rad);
     $query .= " AND longitude < " . ($lon + $rad);
 
-    if ($email && $token)
-    {
+    if ($email && $token) {
         $query .= " UNION ";
 
         $query .= "SELECT 4 AS sortOrder, 'user' AS type, uwp.id, name, name AS wpname, NULL AS frequency, NULL AS callsign, NULL AS airport_icao, latitude, longitude, NULL AS elevation FROM user_waypoints AS uwp";
@@ -312,7 +310,7 @@ function getGeonamesFilterQuery()
     $query .= " OR (feature_class = 'T')"; // any terrain
     $query .= " OR (feature_class = 'H'))"; // any waterbody
 
-/*	$query .= " OR (feature_class = 'S')"; // any spot
+    /*	$query .= " OR (feature_class = 'S')"; // any spot
     $query .= " OR (feature_class = 'T' AND feature_code = 'MT')"; // mountain
     $query .= " OR (feature_class = 'T' AND feature_code = 'MTS')"; // mountains
     $query .= " OR (feature_class = 'T' AND feature_code = 'PK')"; // peak
@@ -330,8 +328,7 @@ function buildGeonamesList($result, $renameDuplicates, $lonLat)
 
     $geonames = [];
 
-    while ($rs = $result->fetch_array(MYSQLI_ASSOC))
-    {
+    while ($rs = $result->fetch_array(MYSQLI_ASSOC)) {
         $geoname = array(
             "type" => $rs["type"],
             "id" => intval($rs["id"]),
@@ -351,8 +348,7 @@ function buildGeonamesList($result, $renameDuplicates, $lonLat)
         $geonames[] = $geoname;
     }
 
-    if ($renameDuplicates)
-    {
+    if ($renameDuplicates) {
         $duplicateIdx = findDuplicates($geonames);
 
         for ($i = 0; $i < count($geonames); $i++) {
@@ -399,25 +395,19 @@ function findDuplicates($geonames)
     $duplicateAdmin1Idx = array();
 
     // check for duplicate names
-    for ($i = 0; $i < count($geonames) - 1; $i++)
-    {
+    for ($i = 0; $i < count($geonames) - 1; $i++) {
         if ($geonames[$i]["type"] != "geoname")
             continue;
 
-        for ($j = $i + 1; $j < count($geonames); $j++)
-        {
+        for ($j = $i + 1; $j < count($geonames); $j++) {
             if ($i == $j || $geonames[$j]["type"] != "geoname")
                 continue;
 
-            if ($geonames[$i]["name"] == $geonames[$j]["name"])
-            {
-                if ($geonames[$i]["admin1"] == $geonames[$j]["admin1"])
-                {
+            if ($geonames[$i]["name"] == $geonames[$j]["name"]) {
+                if ($geonames[$i]["admin1"] == $geonames[$j]["admin1"]) {
                     array_push($duplicateAdmin1Idx, $i);
                     array_push($duplicateAdmin1Idx, $j);
-                }
-                else
-                {
+                } else {
                     array_push($duplicateNameIdx, $i);
                     array_push($duplicateNameIdx, $j);
                 }
@@ -438,10 +428,10 @@ function loadNotamList($lon, $lat, $minNotamTime, $maxNotamTime)
         . " INNER JOIN icao_notam_geometry geo ON geo.icao_notam_id = ntm.id "
         . " INNER JOIN icao_fir fir ON fir.statecode = ntm.country"
         . " LEFT JOIN icao_fir fir2 ON fir2.icao = ntm.icao"
-        . " WHERE ST_INTERSECTS(geo.extent,". getDbPointStringFromLonLat([$lon, $lat]) . ")"
+        . " WHERE ST_INTERSECTS(geo.extent," . getDbPointStringFromLonLat([$lon, $lat]) . ")"
         . "  AND ntm.startdate <= '" . getDbTimeString($maxNotamTime) . "'"
         . "  AND ntm.enddate >= '" . getDbTimeString($minNotamTime) . "'"
-        . "  AND (ST_INTERSECTS(fir.polygon,". getDbPointStringFromLonLat([$lon, $lat]) . "))" //" OR (fir2.icao IS NULL AND geo.geometry IS NOT NULL))"
+        . "  AND (ST_INTERSECTS(fir.polygon," . getDbPointStringFromLonLat([$lon, $lat]) . "))" //" OR (fir2.icao IS NULL AND geo.geometry IS NOT NULL))"
         . " ORDER BY ntm.startdate DESC";
 
     $result = $conn->query($query);
@@ -452,8 +442,7 @@ function loadNotamList($lon, $lat, $minNotamTime, $maxNotamTime)
 
     $notamList = [];
 
-    while ($rs = $result->fetch_array(MYSQLI_ASSOC))
-    {
+    while ($rs = $result->fetch_array(MYSQLI_ASSOC)) {
         $notam = json_decode($rs["notam"], JSON_NUMERIC_CHECK);
 
         // TODO: use same filters in notam.php

@@ -71,7 +71,7 @@ foreach ($chunkedCountryList as $countryChunk)
         $queryParts = [];
         foreach ($notamList as $notam)
         {
-            $dbExtent = $notam["dbExtent"];
+            // $dbExtent = $notam["dbExtent"];
             unset($notam["dbExtent"]);
 
             $queryParts[] = "('"
